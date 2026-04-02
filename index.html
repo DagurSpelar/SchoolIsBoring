@@ -315,7 +315,23 @@
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       <input type="text" placeholder="Search games...">
     </div>
-    <a href="#" class="btn-primary">Sign Up</a>
+    <a href="#" class="btn-primary" onclick="sharePage()">Share</a>
+
+<script>
+function sharePage() {
+  if (navigator.share) {
+    navigator.share({
+      title: document.title,
+      text: "Check this out, you can play so many games IN SCHOOL!",
+      url: window.location.href
+    })
+    .then(() => console.log("Shared successfully"))
+    .catch((error) => console.log("Error sharing:", error));
+  } else {
+    alert("Sharing not supported on this browser");
+  }
+}
+</script>
   </div>
 </nav>
 
@@ -335,8 +351,8 @@
         <div class="stat-label">Always</div>
       </div>
       <div class="stat">
-        <div class="stat-num">0</div>
-        <div class="stat-label">Downloads</div>
+        <div class="stat-num">No ads, no payments!</div>
+        <div class="stat-label">Ads?</div>
       </div>
     </div>
   </div>
@@ -401,11 +417,16 @@
 <div class="banner">
   <div class="banner-inner">
     <div class="banner-text">
-      <h3>Are you a game developer? 🎮</h3>
-      <p>Publish your browser game on GameHive and reach millions of players. It's free to submit and easy to get started.</p>
+      <h3>Is there any issues? 🎮</h3>
+      <p>If there is any issues or glitches, please tell us! It's free to submit and easy to get started.</p>
       <div class="banner-actions">
-        <a href="#" class="btn-primary">Submit Your Game</a>
-        <a href="#" style="color: var(--muted); font-size:14px; text-decoration:none; display:flex; align-items:center; gap:4px; padding: 0 12px;">Learn More →</a>
+<a 
+  href="https://x.com/messages/compose?recipient_id=1601648143803863042&text=Hi%20I%20found%20you%20on%20your%20site" 
+  class="btn-primary" 
+  target="_blank"
+>
+  Tell us!
+</a>
       </div>
     </div>
     <div style="font-size: 80px; opacity:0.6; flex-shrink:0;">🕹️</div>
@@ -428,19 +449,17 @@
       <a href="#">Random Game</a>
     </div>
     <div class="footer-col">
-      <h4>Company</h4>
-      <a href="#">About Us</a>
-      <a href="#">Blog</a>
-      <a href="#">Developers</a>
-      <a href="#">Advertise</a>
-      <a href="#">Contact</a>
+      <h4>Socials</h4>
+      <a href="https://www.youtube.com/@DaxiPaxi">YouTube</a>
+      <a href="https://x.com/DaxiPaxi">Twitter</a>
+      <a href="https://discord.com/users/1053922050353401856">Discord</a>
+      <a href="https://www.tiktok.com/@DaxiPaxi1">TikTok</a>
+      <a href="https://github.com/DagurSpelar">GitHub</a>
     </div>
     <div class="footer-col">
-      <h4>Legal</h4>
-      <a href="#">Privacy Policy</a>
-      <a href="#">Terms of Service</a>
-      <a href="#">Cookie Policy</a>
-      <a href="#">DMCA</a>
+      <h4>Contact</h4>
+      <a href="https://x.com/messages/compose?recipient_id=1601648143803863042&text=Hi%20I%20found%20you%20on%20your%20site">Twitter Conversations</a>
+      <a href="https://discord.com/users/1053922050353401856">Discord Direct Message</a>
     </div>
   </div>
   <div class="footer-bottom">
