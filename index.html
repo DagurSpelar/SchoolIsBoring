@@ -55,6 +55,8 @@
     transition: color 0.2s;
   }
   .nav-links a:hover { color: var(--text); }
+
+  /* NAV SEARCH */
   .nav-search {
     display: flex; align-items: center;
     background: var(--surface);
@@ -63,11 +65,15 @@
     padding: 0 12px;
     gap: 8px;
     height: 36px;
+    transition: border-color 0.2s;
+  }
+  .nav-search:focus-within {
+    border-color: var(--accent);
   }
   .nav-search input {
     background: none; border: none; outline: none;
     color: var(--text); font-family: 'DM Sans', sans-serif;
-    font-size: 14px; width: 180px;
+    font-size: 14px; width: 200px;
   }
   .nav-search input::placeholder { color: var(--muted); }
   .nav-search svg { color: var(--muted); flex-shrink: 0; }
@@ -182,6 +188,58 @@
   }
   .cat-pill .icon { font-size: 14px; }
 
+  /* SEARCH BAR (section) */
+  .search-bar-wrap {
+    max-width: 1200px; margin: 0 auto; padding: 0 2rem 1.5rem;
+  }
+  .search-bar-big {
+    display: flex; align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0 18px;
+    gap: 12px;
+    height: 52px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .search-bar-big:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(108,99,255,0.15);
+  }
+  .search-bar-big input {
+    background: none; border: none; outline: none;
+    color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 16px; flex: 1;
+  }
+  .search-bar-big input::placeholder { color: var(--muted); }
+  .search-bar-big svg { color: var(--muted); flex-shrink: 0; }
+  .search-clear {
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); padding: 4px; border-radius: 50%;
+    display: none; align-items: center; justify-content: center;
+    transition: color 0.2s, background 0.2s;
+  }
+  .search-clear:hover { color: var(--text); background: var(--surface2); }
+  .search-clear.visible { display: flex; }
+
+  /* SEARCH RESULTS HEADER */
+  .search-result-header {
+    display: none;
+    align-items: center; gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+  .search-result-header.visible { display: flex; }
+  .search-result-header h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px; font-weight: 700;
+  }
+  .search-result-header .clear-search {
+    font-size: 13px; color: var(--accent); cursor: pointer;
+    background: none; border: none; font-family: 'DM Sans', sans-serif;
+    padding: 0; transition: opacity 0.2s;
+  }
+  .search-result-header .clear-search:hover { opacity: 0.7; }
+
   /* GAME GRID */
   .game-grid {
     display: grid;
@@ -234,6 +292,9 @@
   .game-genre { font-size: 12px; color: var(--muted); }
   .game-rating { font-size: 12px; color: #ffd166; display: flex; align-items: center; gap: 2px; }
 
+  /* highlight matched text */
+  .highlight { background: rgba(108,99,255,0.3); border-radius: 2px; padding: 0 2px; }
+
   /* BANNER */
   .banner {
     max-width: 1200px; margin: 0 auto 0; padding: 0 2rem 2rem;
@@ -251,12 +312,6 @@
   }
   .banner-text p { color: var(--muted); font-size: 14px; max-width: 400px; }
   .banner-actions { display: flex; gap: 10px; margin-top: 16px; }
-
-  /* DIVIDER */
-  .divider {
-    height: 1px; background: var(--border);
-    max-width: 1200px; margin: 0 auto;
-  }
 
   /* FOOTER */
   footer {
@@ -285,7 +340,6 @@
     color: var(--muted); font-size: 12px;
   }
 
-  /* SCROLLBAR */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
@@ -305,29 +359,28 @@
 <!-- NAV -->
 <nav>
   <a href="#" class="logo">SchoolIs<span>Boring</span></a>
-  <div class="nav-links">
-      </div>
+  <div class="nav-links"></div>
   <div class="nav-right">
-        </div>
+    <div class="nav-search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="text" id="nav-search-input" placeholder="Search games…" autocomplete="off">
+    </div>
     <a href="#" class="btn-primary" onclick="sharePage()">Share</a>
+  </div>
+</nav>
 
 <script>
 function sharePage() {
   if (navigator.share) {
-    navigator.share({
-      title: document.title,
-      text: "Check this out, you can play so many games IN SCHOOL!",
-      url: window.location.href
-    })
-    .then(() => console.log("Shared successfully"))
-    .catch((error) => console.log("Error sharing:", error));
+    navigator.share({ title: document.title, text: "Check this out, you can play so many games IN SCHOOL!", url: window.location.href })
+    .catch((e) => console.log("Error sharing:", e));
   } else {
     alert("Sharing not supported on this browser");
   }
 }
 </script>
-  </div>
-</nav>
 
 <!-- HERO -->
 <section class="hero">
@@ -336,121 +389,99 @@ function sharePage() {
     <p>No downloads. No installs. No accounts needed. Just pick a game and start playing instantly — on any device.</p>
     <a href="#games" class="btn-primary" style="font-size:15px; height:44px; padding: 0 24px; border-radius:10px;">Browse All Games</a>
     <div class="hero-stats">
-      <div class="stat">
-        <div class="stat-num">10,000+</div>
-        <div class="stat-label">Games</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num">Free</div>
-        <div class="stat-label">Always</div>
-      </div>
-      <div class="stat">
-        <div class="stat-num">Ads?</div>
-        <div class="stat-label">No ads, no payments!</div>
-      </div>
+      <div class="stat"><div class="stat-num">10,000+</div><div class="stat-label">Games</div></div>
+      <div class="stat"><div class="stat-num">Free</div><div class="stat-label">Always</div></div>
+      <div class="stat"><div class="stat-num">Ads?</div><div class="stat-label">No ads, no payments!</div></div>
     </div>
   </div>
   <div class="hero-featured">
-  <!-- Featured Game Cards — replace with real thumbnails -->
-  
-  <div class="featured-card big" style="background: linear-gradient(135deg, #1a1040, #2d1b69);">
-    <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
-      <img 
-        src="https://cdn.freebiesupply.com/logos/large/2x/minecraft-1-logo-svg-vector.svg" 
-        alt="Minecraft Logo"
-        style="width:100px; height:100px; object-fit:contain;"
-      >
+    <div class="featured-card big" style="background: linear-gradient(135deg, #1a1040, #2d1b69);">
+      <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
+        <img src="https://cdn.freebiesupply.com/logos/large/2x/minecraft-1-logo-svg-vector.svg" alt="Minecraft Logo" style="width:100px; height:100px; object-fit:contain;">
+      </div>
+      <div class="card-overlay">
+        <div class="card-title">Minecraft 1.8.8</div>
+        <div class="card-genre">Adventure · Survival</div>
+      </div>
+      <button class="play-btn" onclick="window.location.href='https://dagurspelar.github.io/SchoolIsBoring/Minecraft1.8.8.html'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </button>
     </div>
-    <div class="card-overlay">
-      <div class="card-title">Minecraft 1.8.8</div>
-      <div class="card-genre">Adventure · Survival</div>
+    <div class="featured-card" style="background: linear-gradient(135deg, #0a2a1a, #1a4a2a);">
+      <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
+        <img src="https://i.ibb.co/C5NXTMKL/unnamed-6-removebg-preview.png" alt="Baldi Logo" style="width:100px; height:100px; object-fit:contain;">
+      </div>
+      <div class="card-overlay">
+        <div class="card-title">Baldi's Basics in Education and Learning</div>
+        <div class="card-genre">Horror</div>
+      </div>
+      <button class="play-btn" onclick="window.location.href='https://dagurspelar.github.io/SchoolIsBoring/Baldi.html'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </button>
     </div>
-    <button class="play-btn" onclick="window.location.href='https://dagurspelar.github.io/SchoolIsBoring/Minecraft1.8.8.html'">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-        <polygon points="5 3 19 12 5 21 5 3"/>
-      </svg>
-    </button>
+    <div class="featured-card" style="background: linear-gradient(135deg, #2a0a10, #4a1a1a);">
+      <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
+        <img src="https://static.wikia.nocookie.net/logopedia/images/e/ee/0.7.0_fnf_icon_.png/revision/latest/scale-to-width-down/250?cb=20251119181704" alt="FNF Logo" style="width:100px; height:100px; object-fit:contain;">
+      </div>
+      <div class="card-overlay">
+        <div class="card-title">Friday Night Funkin</div>
+        <div class="card-genre">Music</div>
+      </div>
+      <button class="play-btn" onclick="window.location.href='https://dagurspelar.github.io/SchoolIsBoring/FNF.html'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </button>
+    </div>
   </div>
-
-  <div class="featured-card" style="background: linear-gradient(135deg, #0a2a1a, #1a4a2a);">
-    <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
-      <img 
-        src="https://i.ibb.co/C5NXTMKL/unnamed-6-removebg-preview.png" 
-        alt="Baldi Logo"
-        style="width:100px; height:100px; object-fit:contain;"
-      >
-    </div>
-    <div class="card-overlay">
-      <div class="card-title">Baldi's Basics in Education and Learning</div>
-      <div class="card-genre">Horror</div>
-    </div>
-    <button class="play-btn" onclick="window.location.href='https://dagurspelar.github.io/SchoolIsBoring/Baldi.html'">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-        <polygon points="5 3 19 12 5 21 5 3"/>
-      </svg>
-    </button>
-  </div>
-
-  <!-- FIXED: proper closing before FNF starts -->
-
-  <div class="featured-card" style="background: linear-gradient(135deg, #2a0a10, #4a1a1a);">
-    <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
-      <img 
-        src="https://static.wikia.nocookie.net/logopedia/images/e/ee/0.7.0_fnf_icon_.png/revision/latest/scale-to-width-down/250?cb=20251119181704" 
-        alt="FNF Logo"
-        style="width:100px; height:100px; object-fit:contain;"
-      >
-    </div>
-    <div class="card-overlay">
-      <div class="card-title">Friday Night Funkin</div>
-      <div class="card-genre">Music</div>
-    </div>
-    <button class="play-btn" onclick="window.location.href='https://dagurspelar.github.io/SchoolIsBoring/FNF.html'">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-        <polygon points="5 3 19 12 5 21 5 3"/>
-      </svg>
-    </button>
-  </div>
-
-</div>
 </section>
 
 <!-- CATEGORIES -->
 <section class="section">
-  <div class="section-header">
-    <h2>Browse by Category</h2>
-  </div>
+  <div class="section-header"><h2>Browse by Category</h2></div>
   <div class="categories"></div>
 </section>
 
-<!-- GAMES SECTION (rendered by JS) -->
-<section class="section" id="games">
+<!-- BIG SEARCH BAR -->
+<div class="search-bar-wrap" id="games">
+  <div class="search-bar-big">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input type="text" id="main-search-input" placeholder="Search for a game…" autocomplete="off">
+    <button class="search-clear" id="search-clear-btn" title="Clear search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- GAMES SECTION -->
+<section class="section" style="padding-top: 0;">
   <div class="section-header">
     <h2 id="section-title">🔥 All Games</h2>
     <span id="game-count" style="font-size:13px; color:var(--muted);"></span>
   </div>
+  <!-- Search results header (shown during search) -->
+  <div class="search-result-header" id="search-result-header">
+    <h2 id="search-result-title">Search results</h2>
+    <button class="clear-search" id="clear-search-btn">Clear search</button>
+  </div>
   <div class="game-grid" id="game-grid"></div>
   <div id="empty-state" style="display:none; text-align:center; padding:4rem 2rem; color:var(--muted);">
     <div style="font-size:48px; margin-bottom:1rem;">🎮</div>
-    <p style="font-size:16px;">No games in this category yet.</p>
-    <p style="font-size:13px; margin-top:6px;">Add some to the GAMES list in the script!</p>
+    <p style="font-size:16px;" id="empty-msg">No games in this category yet.</p>
+    <p style="font-size:13px; margin-top:6px;" id="empty-sub">Add some to the GAMES list in the script!</p>
   </div>
 </section>
 
-<!-- CALL TO ACTION BANNER -->
+<!-- CTA BANNER -->
 <div class="banner">
   <div class="banner-inner">
     <div class="banner-text">
       <h3>Is there any issues? 🎮</h3>
       <p>If there is any issues or glitches, please tell us! It's free to submit and easy to get started.</p>
       <div class="banner-actions">
-<a 
-  href="https://x.com/messages/compose?recipient_id=1601648143803863042&text=Hi%20I%20found%20you%20on%20your%20site" 
-  class="btn-primary" 
-  target="_blank"
->
-  Tell us!
-</a>
+        <a href="https://x.com/messages/compose?recipient_id=1601648143803863042&text=Hi%20I%20found%20you%20on%20your%20site" class="btn-primary" target="_blank">Tell us!</a>
       </div>
     </div>
     <div style="font-size: 80px; opacity:0.6; flex-shrink:0;">🕹️</div>
@@ -493,240 +524,61 @@ function sharePage() {
 </footer>
 
 <script>
-  // ============================================================
-  //  CATEGORIES — Add or remove categories here
-  //  Each category needs: id, label, icon
-  // ============================================================
   const CATEGORIES = [
-    { id: 'all',        label: 'All Games',  icon: '🎮' },
-    { id: 'sandbox',     label: 'Sandbox',     icon: '⚔️' },
-    { id: 'puzzle',     label: 'Puzzle',     icon: '🧩' },
-    { id: 'racing',     label: 'Racing',     icon: '🏎️' },
-    { id: 'sports',     label: 'Sports',     icon: '⚽' },
-    { id: 'shooting',   label: 'Shooting',   icon: '🔫' },
-    { id: 'strategy',   label: 'Strategy',   icon: '🧠' },
-    { id: 'arcade',     label: 'Arcade',     icon: '👾' },
-    { id: 'board',      label: 'Board',      icon: '🎲' },
-    { id: 'horror',     label: 'Horror',     icon: '😱' },
-    { id: 'idle',       label: 'Idle',       icon: '🌿' },
-    { id: 'simulation', label: 'Simulation', icon: '🏠' },
-    { id: 'kids',       label: 'Kids',       icon: '👧' },
-    { id: 'card',       label: 'Card',       icon: '🃏' },
-    { id: 'multiplayer',label: 'Multiplayer',icon: '💃' },
+    { id: 'all',        label: 'All Games',   icon: '🎮' },
+    { id: 'sandbox',    label: 'Sandbox',     icon: '⚔️' },
+    { id: 'puzzle',     label: 'Puzzle',      icon: '🧩' },
+    { id: 'racing',     label: 'Racing',      icon: '🏎️' },
+    { id: 'sports',     label: 'Sports',      icon: '⚽' },
+    { id: 'shooting',   label: 'Shooting',    icon: '🔫' },
+    { id: 'strategy',   label: 'Strategy',    icon: '🧠' },
+    { id: 'arcade',     label: 'Arcade',      icon: '👾' },
+    { id: 'board',      label: 'Board',       icon: '🎲' },
+    { id: 'horror',     label: 'Horror',      icon: '😱' },
+    { id: 'idle',       label: 'Idle',        icon: '🌿' },
+    { id: 'simulation', label: 'Simulation',  icon: '🏠' },
+    { id: 'kids',       label: 'Kids',        icon: '👧' },
+    { id: 'card',       label: 'Card',        icon: '🃏' },
+    { id: 'multiplayer',label: 'Multiplayer', icon: '💃' },
   ];
 
-  // ============================================================
-  //  GAMES — Add your games here!
-  //
-  //  Each game object:
-  //    name     : string  — display name
-  //    category : string  — must match a category id above
-  //    url      : string  — link to play the game (or '#')
-  //    emoji    : string  — shown if no image thumbnail
-  //    image    : string  — (optional) path/url to thumbnail image
-  //    bg       : string  — CSS gradient for the card background
-  //    rating   : number  — e.g. 4.8
-  //    badge    : 'hot' | 'new' | null
-  //
-  //  EXAMPLE — copy this block and fill in your details:
-  //  {
-  //    name: 'My Cool Game',
-  //    category: 'action',
-  //    url: 'https://example.com/my-game',
-  //    emoji: '🗡️',
-  //    bg: 'linear-gradient(135deg,#1a0a2a,#3a1a5a)',
-  //    rating: 4.7,
-  //    badge: 'new'
-  //  },
-  // ============================================================
   const GAMES = [
-  { 
-    name: 'Minecraft', 
-    category: 'sandbox', 
-    url: 'https://dagurspelar.github.io/SchoolIsBoring/Minecraft1.8.8.html',
-    image: 'https://cdn.freebiesupply.com/logos/large/2x/minecraft-1-logo-svg-vector.svg',
-    emoji: '🏰', 
-    bg: 'linear-gradient(135deg,#1a1040,#3d1b69)', 
-    rating: 4.8, 
-    badge: 'hot' 
-  },
-  { 
-    name: 'Speed Rush 3D', 
-    category: 'racing', 
-    url: '#', 
-    image: 'https://picsum.photos/id/1015/600/450',
-    emoji: '🏎️', 
-    bg: 'linear-gradient(135deg,#0a2a1a,#1a5a2a)', 
-    rating: 4.6, 
-    badge: null 
-  },
-  { 
-    name: 'Pixel Invaders', 
-    category: 'arcade', 
-    url: '#', 
-    image: 'https://picsum.photos/id/201/600/450',
-    emoji: '👾', 
-    bg: 'linear-gradient(135deg,#2a0a10,#5a1a1a)', 
-    rating: 4.5, 
-    badge: 'new' 
-  },
-  { 
-    name: 'Brain Blox', 
-    category: 'puzzle', 
-    url: '#', 
-    image: 'https://picsum.photos/id/133/600/450',
-    emoji: '🧩', 
-    bg: 'linear-gradient(135deg,#0a1a2a,#1a3a5a)', 
-    rating: 4.7, 
-    badge: null 
-  },
-  { 
-    name: 'Wizard Wars', 
-    category: 'strategy', 
-    url: '#', 
-    image: 'https://picsum.photos/id/160/600/450',
-    emoji: '🧙', 
-    bg: 'linear-gradient(135deg,#1a0a2a,#3a1a5a)', 
-    rating: 4.9, 
-    badge: 'hot' 
-  },
-  { 
-    name: 'Super Kick', 
-    category: 'sports', 
-    url: '#', 
-    image: 'https://picsum.photos/id/1005/600/450',
-    emoji: '⚽', 
-    bg: 'linear-gradient(135deg,#1a1a0a,#3a3a1a)', 
-    rating: 4.4, 
-    badge: null 
-  },
-  { 
-    name: 'Arrow Strike', 
-    category: 'shooting', 
-    url: '#', 
-    image: 'https://picsum.photos/id/1016/600/450',
-    emoji: '🏹', 
-    bg: 'linear-gradient(135deg,#2a1a0a,#5a3a1a)', 
-    rating: 4.3, 
-    badge: 'new' 
-  },
-  { 
-    name: 'Ocean Explorer', 
-    category: 'idle', 
-    url: '#', 
-    image: 'https://picsum.photos/id/1018/600/450',
-    emoji: '🐠', 
-    bg: 'linear-gradient(135deg,#0a2a2a,#1a5a5a)', 
-    rating: 4.6, 
-    badge: null 
-  },
-  { 
-    name: 'Forest Escape', 
-    category: 'action', 
-    url: '#', 
-    image: 'https://picsum.photos/id/133/600/450',
-    emoji: '🌲', 
-    bg: 'linear-gradient(135deg,#0a1a0a,#1a3a2a)', 
-    rating: 4.2, 
-    badge: 'new' 
-  },
-  { 
-    name: 'Blaze Runner', 
-    category: 'arcade', 
-    url: '#', 
-    image: 'https://picsum.photos/id/160/600/450',
-    emoji: '🔥', 
-    bg: 'linear-gradient(135deg,#1a0a0a,#3a2a0a)', 
-    rating: 4.5, 
-    badge: 'new' 
-  },
-  { 
-    name: 'Galaxy Drift', 
-    category: 'racing', 
-    url: '#', 
-    image: 'https://picsum.photos/id/201/600/450',
-    emoji: '🚀', 
-    bg: 'linear-gradient(135deg,#0a0a2a,#2a1a4a)', 
-    rating: 4.7, 
-    badge: 'new' 
-  },
-  { 
-    name: 'Rhythm Smash', 
-    category: 'arcade', 
-    url: '#', 
-    image: 'https://picsum.photos/id/1005/600/450',
-    emoji: '🎸', 
-    bg: 'linear-gradient(135deg,#1a0a1a,#3a1a3a)', 
-    rating: 4.8, 
-    badge: 'new' 
-  },
-  { 
-    name: 'Dragon Tamer', 
-    category: 'strategy', 
-    url: '#', 
-    image: 'https://picsum.photos/id/1016/600/450',
-    emoji: '🐉', 
-    bg: 'linear-gradient(135deg,#0a1a1a,#1a3a4a)', 
-    rating: 4.6, 
-    badge: 'new' 
-  },
-  { 
-    name: 'Mushroom Kingdom', 
-    category: 'kids', 
-    url: '#', 
-    image: 'https://picsum.photos/id/133/600/450',
-    emoji: '🍄', 
-    bg: 'linear-gradient(135deg,#1a1a0a,#3a3a1a)', 
-    rating: 4.4, 
-    badge: 'new' 
-  },
-  { 
-    name: 'Night Terror', 
-    category: 'horror', 
-    url: '#', 
-    image: 'https://picsum.photos/id/160/600/450',
-    emoji: '👻', 
-    bg: 'linear-gradient(135deg,#0a0a0a,#1a0a1a)', 
-    rating: 4.5, 
-    badge: null 
-  },
-  { 
-    name: 'Card Duel', 
-    category: 'card', 
-    url: '#', 
-    image: 'https://picsum.photos/id/201/600/450',
-    emoji: '🃏', 
-    bg: 'linear-gradient(135deg,#0a1a2a,#1a2a3a)', 
-    rating: 4.3, 
-    badge: null 
-  },
-  { 
-    name: 'Battle Arena', 
-    category: 'multiplayer', 
-    url: '#', 
-    image: 'https://picsum.photos/id/1005/600/450',
-    emoji: '⚡', 
-    bg: 'linear-gradient(135deg,#1a1a0a,#2a2a0a)', 
-    rating: 4.7, 
-    badge: 'hot' 
-  },
-  { 
-    name: 'City Builder', 
-    category: 'simulation', 
-    url: '#', 
-    image: 'https://picsum.photos/id/1018/600/450',
-    emoji: '🏙️', 
-    bg: 'linear-gradient(135deg,#0a1a2a,#0a2a3a)', 
-    rating: 4.5, 
-    badge: null 
-  }
-];
+    { name: 'Minecraft', category: 'sandbox', url: 'https://dagurspelar.github.io/SchoolIsBoring/Minecraft1.8.8.html', image: 'https://cdn.freebiesupply.com/logos/large/2x/minecraft-1-logo-svg-vector.svg', emoji: '🏰', bg: 'linear-gradient(135deg,#1a1040,#3d1b69)', rating: 4.8, badge: 'hot' },
+    { name: 'Speed Rush 3D', category: 'racing', url: '#', image: 'https://picsum.photos/id/1015/600/450', emoji: '🏎️', bg: 'linear-gradient(135deg,#0a2a1a,#1a5a2a)', rating: 4.6, badge: null },
+    { name: 'Pixel Invaders', category: 'arcade', url: '#', image: 'https://picsum.photos/id/201/600/450', emoji: '👾', bg: 'linear-gradient(135deg,#2a0a10,#5a1a1a)', rating: 4.5, badge: 'new' },
+    { name: 'Brain Blox', category: 'puzzle', url: '#', image: 'https://picsum.photos/id/133/600/450', emoji: '🧩', bg: 'linear-gradient(135deg,#0a1a2a,#1a3a5a)', rating: 4.7, badge: null },
+    { name: 'Wizard Wars', category: 'strategy', url: '#', image: 'https://picsum.photos/id/160/600/450', emoji: '🧙', bg: 'linear-gradient(135deg,#1a0a2a,#3a1a5a)', rating: 4.9, badge: 'hot' },
+    { name: 'Super Kick', category: 'sports', url: '#', image: 'https://picsum.photos/id/1005/600/450', emoji: '⚽', bg: 'linear-gradient(135deg,#1a1a0a,#3a3a1a)', rating: 4.4, badge: null },
+    { name: 'Arrow Strike', category: 'shooting', url: '#', image: 'https://picsum.photos/id/1016/600/450', emoji: '🏹', bg: 'linear-gradient(135deg,#2a1a0a,#5a3a1a)', rating: 4.3, badge: 'new' },
+    { name: 'Ocean Explorer', category: 'idle', url: '#', image: 'https://picsum.photos/id/1018/600/450', emoji: '🐠', bg: 'linear-gradient(135deg,#0a2a2a,#1a5a5a)', rating: 4.6, badge: null },
+    { name: 'Forest Escape', category: 'action', url: '#', image: 'https://picsum.photos/id/133/600/450', emoji: '🌲', bg: 'linear-gradient(135deg,#0a1a0a,#1a3a2a)', rating: 4.2, badge: 'new' },
+    { name: 'Blaze Runner', category: 'arcade', url: '#', image: 'https://picsum.photos/id/160/600/450', emoji: '🔥', bg: 'linear-gradient(135deg,#1a0a0a,#3a2a0a)', rating: 4.5, badge: 'new' },
+    { name: 'Galaxy Drift', category: 'racing', url: '#', image: 'https://picsum.photos/id/201/600/450', emoji: '🚀', bg: 'linear-gradient(135deg,#0a0a2a,#2a1a4a)', rating: 4.7, badge: 'new' },
+    { name: 'Rhythm Smash', category: 'arcade', url: '#', image: 'https://picsum.photos/id/1005/600/450', emoji: '🎸', bg: 'linear-gradient(135deg,#1a0a1a,#3a1a3a)', rating: 4.8, badge: 'new' },
+    { name: 'Dragon Tamer', category: 'strategy', url: '#', image: 'https://picsum.photos/id/1016/600/450', emoji: '🐉', bg: 'linear-gradient(135deg,#0a1a1a,#1a3a4a)', rating: 4.6, badge: 'new' },
+    { name: 'Mushroom Kingdom', category: 'kids', url: '#', image: 'https://picsum.photos/id/133/600/450', emoji: '🍄', bg: 'linear-gradient(135deg,#1a1a0a,#3a3a1a)', rating: 4.4, badge: 'new' },
+    { name: 'Night Terror', category: 'horror', url: '#', image: 'https://picsum.photos/id/160/600/450', emoji: '👻', bg: 'linear-gradient(135deg,#0a0a0a,#1a0a1a)', rating: 4.5, badge: null },
+    { name: 'Card Duel', category: 'card', url: '#', image: 'https://picsum.photos/id/201/600/450', emoji: '🃏', bg: 'linear-gradient(135deg,#0a1a2a,#1a2a3a)', rating: 4.3, badge: null },
+    { name: 'Battle Arena', category: 'multiplayer', url: '#', image: 'https://picsum.photos/id/1005/600/450', emoji: '⚡', bg: 'linear-gradient(135deg,#1a1a0a,#2a2a0a)', rating: 4.7, badge: 'hot' },
+    { name: 'City Builder', category: 'simulation', url: '#', image: 'https://picsum.photos/id/1018/600/450', emoji: '🏙️', bg: 'linear-gradient(135deg,#0a1a2a,#0a2a3a)', rating: 4.5, badge: null },
+  ];
 
-  // ============================================================
-  //  ENGINE — no need to edit below this line
-  // ============================================================
+  // ── State ──────────────────────────────────────────────────
   let activeCategory = 'all';
+  let searchQuery = '';
 
+  // ── Helpers ────────────────────────────────────────────────
+  function escapeRegExp(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function highlightMatch(text, query) {
+    if (!query) return text;
+    const re = new RegExp('(' + escapeRegExp(query) + ')', 'gi');
+    return text.replace(re, '<mark class="highlight">$1</mark>');
+  }
+
+  // ── Build category pills ───────────────────────────────────
   function buildCategoryPills() {
     const container = document.querySelector('.categories');
     container.innerHTML = '';
@@ -741,6 +593,8 @@ function sharePage() {
         document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
         this.classList.add('active');
         activeCategory = cat.id;
+        // Clear search when changing category
+        clearSearch();
         renderGames();
         document.getElementById('games').scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
@@ -748,26 +602,56 @@ function sharePage() {
     });
   }
 
+  // ── Render games ───────────────────────────────────────────
   function renderGames() {
     const grid = document.getElementById('game-grid');
     const empty = document.getElementById('empty-state');
-    const title = document.getElementById('section-title');
+    const emptyMsg = document.getElementById('empty-msg');
+    const emptySub = document.getElementById('empty-sub');
+    const sectionHeader = document.querySelector('.section-header');
+    const searchResultHeader = document.getElementById('search-result-header');
+    const searchResultTitle = document.getElementById('search-result-title');
     const countEl = document.getElementById('game-count');
 
-    const filtered = activeCategory === 'all'
-      ? GAMES
-      : GAMES.filter(g => g.category === activeCategory);
+    const query = searchQuery.trim().toLowerCase();
+    const isSearching = query.length > 0;
 
-    const cat = CATEGORIES.find(c => c.id === activeCategory);
-    title.textContent = activeCategory === 'all'
-      ? '🎮 All Games'
-      : `${cat.icon} ${cat.label}`;
+    // Filter by category first
+    let filtered = activeCategory === 'all' ? GAMES : GAMES.filter(g => g.category === activeCategory);
 
-    countEl.textContent = filtered.length > 0 ? `${filtered.length} games` : '';
+    // Then filter by search query
+    if (isSearching) {
+      filtered = filtered.filter(g => g.name.toLowerCase().includes(query));
+    }
+
+    // Toggle headers
+    if (isSearching) {
+      sectionHeader.style.display = 'none';
+      searchResultHeader.classList.add('visible');
+      if (filtered.length === 0) {
+        searchResultTitle.textContent = `No results for "${searchQuery}"`;
+      } else {
+        searchResultTitle.textContent = `Results for "${searchQuery}"`;
+      }
+      countEl.textContent = filtered.length > 0 ? `${filtered.length} game${filtered.length !== 1 ? 's' : ''}` : '';
+    } else {
+      sectionHeader.style.display = 'flex';
+      searchResultHeader.classList.remove('visible');
+      const cat = CATEGORIES.find(c => c.id === activeCategory);
+      document.getElementById('section-title').textContent = activeCategory === 'all' ? '🔥 All Games' : `${cat.icon} ${cat.label}`;
+      countEl.textContent = filtered.length > 0 ? `${filtered.length} games` : '';
+    }
 
     if (filtered.length === 0) {
       grid.style.display = 'none';
       empty.style.display = 'block';
+      if (isSearching) {
+        emptyMsg.textContent = `No games found for "${searchQuery}".`;
+        emptySub.textContent = 'Try a different search term.';
+      } else {
+        emptyMsg.textContent = 'No games in this category yet.';
+        emptySub.textContent = 'Add some to the GAMES list in the script!';
+      }
       return;
     }
 
@@ -786,6 +670,7 @@ function sharePage() {
         : `<span class="emoji">${game.emoji}</span>`;
 
       const genreLabel = CATEGORIES.find(c => c.id === game.category)?.label || game.category;
+      const displayName = isSearching ? highlightMatch(game.name, searchQuery.trim()) : game.name;
 
       return `
         <a href="${game.url}" class="game-card">
@@ -794,7 +679,7 @@ function sharePage() {
             ${badge}
           </div>
           <div class="game-info">
-            <div class="name">${game.name}</div>
+            <div class="name">${displayName}</div>
             <div class="game-meta">
               <span class="game-genre">${genreLabel}</span>
               <span class="game-rating">★ ${game.rating.toFixed(1)}</span>
@@ -804,6 +689,80 @@ function sharePage() {
     }).join('');
   }
 
+  // ── Search logic ───────────────────────────────────────────
+  function handleSearch(query) {
+    searchQuery = query;
+    const clearBtn = document.getElementById('search-clear-btn');
+    if (query.length > 0) {
+      clearBtn.classList.add('visible');
+    } else {
+      clearBtn.classList.remove('visible');
+    }
+    renderGames();
+  }
+
+  function clearSearch() {
+    searchQuery = '';
+    document.getElementById('main-search-input').value = '';
+    document.getElementById('nav-search-input').value = '';
+    document.getElementById('search-clear-btn').classList.remove('visible');
+  }
+
+  // ── Wire up inputs ─────────────────────────────────────────
+  const mainInput = document.getElementById('main-search-input');
+  const navInput = document.getElementById('nav-search-input');
+  const clearBtn = document.getElementById('search-clear-btn');
+  const clearSearchBtn = document.getElementById('clear-search-btn');
+
+  mainInput.addEventListener('input', function() {
+    navInput.value = this.value;
+    handleSearch(this.value);
+  });
+
+  navInput.addEventListener('input', function() {
+    mainInput.value = this.value;
+    handleSearch(this.value);
+    // Scroll to games section when typing in nav search
+    if (this.value.length === 1) {
+      document.getElementById('games').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+
+  // Focus main search when clicking nav search on mobile
+  navInput.addEventListener('focus', function() {
+    if (window.innerWidth <= 768) {
+      document.getElementById('games').scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => mainInput.focus(), 400);
+    }
+  });
+
+  clearBtn.addEventListener('click', function() {
+    clearSearch();
+    renderGames();
+    mainInput.focus();
+  });
+
+  clearSearchBtn.addEventListener('click', function() {
+    clearSearch();
+    renderGames();
+  });
+
+  // Keyboard shortcut: press / to focus search
+  document.addEventListener('keydown', function(e) {
+    if (e.key === '/' && document.activeElement !== mainInput && document.activeElement !== navInput) {
+      e.preventDefault();
+      mainInput.focus();
+      document.getElementById('games').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    if (e.key === 'Escape') {
+      clearSearch();
+      renderGames();
+      mainInput.blur();
+      navInput.blur();
+    }
+  });
+
+  // ── Init ───────────────────────────────────────────────────
   buildCategoryPills();
   renderGames();
 </script>
