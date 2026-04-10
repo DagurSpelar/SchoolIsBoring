@@ -345,7 +345,9 @@ footer{border-top:1px solid var(--br);padding:3.5rem 2rem;max-width:1300px;margi
       <label for="ios-no-show">Do not show again</label>
     </div>
     <div class="ios-popup-btns">
-      <button class="ios-btn-primary" onclick="window.location.href='https://dagurspelar.github.io/SchoolIsBoring/IosDownload/'">📲 Sure, I'll download it!</button>
+<button class="ios-btn-primary" onclick="iosPopupDownload(); window.location.href='https://your-website.com';">
+  📲 Sure, I'll download it!
+</button>
       <button class="ios-btn-secondary" onclick="iosPopupIgnore()">Ignore and continue using PC Controls<br><span style="font-size:11px;opacity:.65;">(Not Recommended)</span></button>
     </div>
   </div>
@@ -739,7 +741,7 @@ function iosPopupIgnore(){
   }
   document.getElementById('ios-popup-overlay').classList.remove('show');
 }
-function window.location.href='https://dagurspelar.github.io/SchoolIsBoring/IosDownload/'{
+function iosPopupDownload(){
   if(document.getElementById('ios-no-show').checked){
     localStorage.setItem('sib_ios_popup_dismissed','1');
   }
